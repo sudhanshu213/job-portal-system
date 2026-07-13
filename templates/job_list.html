@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Available Jobs</h3>
+{% for job in jobs %}
+    <div>
+        <h4>{{ job.title }}</h4>
+        <p>{{ job.location }} — {{ job.job_type }}</p>
+        <p>{{ job.description|truncatewords:20 }}</p>
+        {% if user.is_authenticated and user.role == 'seeker' %}
+            <a href="{% url 'apply_job' job.id %}">Apply</a>
+        {% endif %}
+    </div>
+    <hr>
+{% empty %}
+    <p>No jobs posted yet.</p>
+{% endfor %}
+{% endblock %}

@@ -1,13 +1,211 @@
 {% extends 'base.html' %}
 
+{% block title %}Dashboard - JobPortal{% endblock %}
+
 {% block content %}
+<!-- Welcome Dashboard Banner -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="p-4 p-md-5 rounded-4 text-white shadow-sm position-relative overflow-hidden" 
+             style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);">
+            
+            <div style="position: absolute; right: -50px; bottom: -50px; width: 320px; height: 320px; background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%); border-radius: 50%;"></div>
 
-<h1>Welcome to Job Portal</h1>
+            <div class="row align-items-center position-relative" style="z-index: 2;">
+                <div class="col-lg-8">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1 small">
+                            {% if user.role == 'recruiter' %}Employer Hub{% else %}Candidate Dashboard{% endif %}
+                        </span>
+                        <span class="text-white-50 small">•</span>
+                        <span class="text-white-50 small">Active Session</span>
+                    </div>
 
-<p>Find Your Dream Job Here.</p>
+                    <h1 class="display-6 fw-bold mb-2">
+                        Welcome back, <span style="color: #a5b4fc;">{{ user.username }}</span>! 👋
+                    </h1>
+                    <p class="text-white-50 lead fs-6 mb-4">
+                        {% if user.role == 'recruiter' %}
+                            Manage your job postings, track applications, and recruit top tier talent.
+                        {% else %}
+                            Explore curated career opportunities, apply with your resume, and track your applications.
+                        {% endif %}
+                    </p>
 
-<a href="{% url 'login' %}">Login</a>
-<br><br>
-<a href="{% url 'register' %}">Register</a>
+                    <!-- Search Form Bar -->
+                    <form method="get" action="{% url 'job_list' %}" class="row g-2">
+                        <div class="col-sm-8 col-md-7">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-0" style="border-radius: 12px 0 0 12px;">
+                                    <i class="bi bi-search text-muted"></i>
+                                </span>
+                                <input type="text" name="q" class="form-control border-0 py-2" style="border-radius: 0 12px 12px 0;" placeholder="Search jobs by title, company, or skills...">
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <button type="submit" class="btn btn-modern-primary w-100 py-2">
+                                Search Jobs
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
+                <div class="col-lg-4 d-none d-lg-flex justify-content-end">
+                    <div class="text-center p-4 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10" style="min-width: 220px;">
+                        {% if user.role == 'recruiter' %}
+                            <div class="display-4 fw-bold text-white mb-0">{{ user_posted_count }}</div>
+                            <div class="text-white-50 small text-uppercase fw-semibold">Jobs Posted By You</div>
+                            <div class="mt-3 d-flex flex-column gap-2">
+                                <a href="{% url 'my_jobs' %}" class="btn btn-modern-primary btn-sm w-100">
+                                    <i class="bi bi-collection me-1"></i>Manage Jobs
+                                </a>
+                                <a href="{% url 'post_job' %}" class="btn btn-modern-warning btn-sm w-100">
+                                    <i class="bi bi-plus-circle me-1"></i>Post New Job
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="display-4 fw-bold text-white mb-0">{{ user_applied_count }}</div>
+                            <div class="text-white-50 small text-uppercase fw-semibold">Jobs Applied</div>
+                            <div class="mt-3 d-flex flex-column gap-2">
+                                <a href="{% url 'my_applications' %}" class="btn btn-modern-primary btn-sm w-100">
+                                    <i class="bi bi-file-earmark-check me-1"></i>My Applications
+                                </a>
+                                <a href="{% url 'job_list' %}" class="btn btn-outline-light btn-sm w-100">
+                                    <i class="bi bi-search me-1"></i>Browse Openings
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats / Highlights -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="modern-card p-4 h-100 d-flex align-items-center">
+            <div class="rounded-4 p-3 bg-primary bg-opacity-10 text-primary me-3">
+                <i class="bi bi-briefcase fs-3"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-0">{{ total_jobs }}</h4>
+                <span class="text-muted small">Total Active Jobs</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="modern-card p-4 h-100 d-flex align-items-center">
+            <div class="rounded-4 p-3 bg-success bg-opacity-10 text-success me-3">
+                <i class="bi bi-patch-check fs-3"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-0">Verified</h4>
+                <span class="text-muted small">Quality Openings</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="modern-card p-4 h-100 d-flex align-items-center">
+            <div class="rounded-4 p-3 bg-warning bg-opacity-10 text-warning me-3">
+                <i class="bi bi-lightning-charge fs-3"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-0">Direct</h4>
+                <span class="text-muted small">Fast-track Reviews</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Jobs Feed -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="fw-bold mb-0">Latest Opportunities</h3>
+        <p class="text-muted small mb-0">Recently published positions ready for application</p>
+    </div>
+    <a href="{% url 'job_list' %}" class="btn btn-modern-secondary btn-sm">
+        View All Jobs ({{ total_jobs }}) &rarr;
+    </a>
+</div>
+
+<div class="row g-3">
+    {% for job in recent_jobs %}
+        <div class="col-lg-6">
+            <div class="modern-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-bold"
+                                 style="width: 44px; height: 44px; background: var(--primary-gradient); font-size: 1.1rem;">
+                                {{ job.company_name|slice:":1"|default:job.title|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0">
+                                    <a href="{% url 'job_detail' job.id %}" class="text-decoration-none text-dark">
+                                        {{ job.title }}
+                                    </a>
+                                </h5>
+                                {% if job.company_name %}
+                                    <span class="text-muted small fw-semibold">{{ job.company_name }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <span class="badge-type">{{ job.get_job_type_display }}</span>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-3 text-muted small my-3">
+                        {% if job.location %}
+                            <span><i class="bi bi-geo-alt me-1 text-danger"></i>{{ job.location }}</span>
+                        {% endif %}
+                        {% if job.salary %}
+                            <span><i class="bi bi-cash me-1 text-success"></i>{{ job.salary }}</span>
+                        {% endif %}
+                        <span><i class="bi bi-clock me-1 text-secondary"></i>{{ job.created_at|timesince }} ago</span>
+                    </div>
+
+                    <p class="text-secondary small mb-3">
+                        {{ job.description|truncatewords:24 }}
+                    </p>
+                </div>
+
+                <div class="pt-3 border-top d-flex justify-content-between align-items-center">
+                    <a href="{% url 'job_detail' job.id %}" class="text-decoration-none fw-semibold small" style="color: var(--primary);">
+                        View Full Details &rarr;
+                    </a>
+
+                    <div>
+                        {% if user.role == 'seeker' %}
+                            {% if job.id in user_applied_job_ids %}
+                                <span class="badge-seeker small">
+                                    <i class="bi bi-check-circle-fill me-1"></i>Applied
+                                </span>
+                            {% else %}
+                                <a href="{% url 'apply_job' job.id %}" class="btn btn-modern-primary btn-sm">
+                                    Apply Now
+                                </a>
+                            {% endif %}
+                        {% elif user.role == 'recruiter' and job.recruiter == user %}
+                            <span class="badge bg-light text-secondary border small">Posted by You</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="modern-card p-5 text-center">
+                <i class="bi bi-folder-x text-muted mb-2" style="font-size: 3rem;"></i>
+                <h5 class="fw-bold text-dark">No job vacancies available right now</h5>
+                <p class="text-muted small">Be the first to post a vacancy or check back soon.</p>
+                {% if user.role == 'recruiter' %}
+                    <a href="{% url 'post_job' %}" class="btn btn-modern-warning mt-2">
+                        Post a Job Now
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}

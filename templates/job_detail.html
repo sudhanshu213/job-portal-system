@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} - JobPortal{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'job_list' %}" class="btn btn-modern-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Back to All Openings
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <div class="modern-card p-4 p-md-5 mb-4">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-4 d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
+                         style="width: 56px; height: 56px; background: var(--primary-gradient); font-size: 1.4rem;">
+                        {{ job.company_name|slice:":1"|default:job.title|slice:":1"|upper }}
+                    </div>
+                    <div>
+                        <h2 class="fw-bold mb-1">{{ job.title }}</h2>
+                        {% if job.company_name %}
+                            <h5 class="text-secondary fw-semibold mb-0">
+                                <i class="bi bi-building me-1"></i>{{ job.company_name }}
+                            </h5>
+                        {% endif %}
+                    </div>
+                </div>
+                <span class="badge-type fs-6">{{ job.get_job_type_display }}</span>
+            </div>
+
+            <!-- Key Info Bar -->
+            <div class="d-flex flex-wrap gap-4 py-3 px-4 rounded-4 bg-light border my-4 text-muted small">
+                {% if job.location %}
+                    <div><i class="bi bi-geo-alt-fill text-danger me-1"></i><strong>Location:</strong> {{ job.location }}</div>
+                {% endif %}
+                {% if job.salary %}
+                    <div><i class="bi bi-cash-stack text-success me-1"></i><strong>Salary:</strong> {{ job.salary }}</div>
+                {% endif %}
+                <div><i class="bi bi-calendar3 text-primary me-1"></i><strong>Posted:</strong> {{ job.created_at|date:"F d, Y" }}</div>
+            </div>
+
+            <h5 class="fw-bold mb-3 text-dark">Job Description & Responsibilities</h5>
+            <div class="text-secondary lh-lg" style="white-space: pre-line; font-size: 1rem;">
+                {{ job.description }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar / Action Panel -->
+    <div class="col-lg-4">
+        <div class="modern-card p-4 sticky-top" style="top: 90px;">
+            <h5 class="fw-bold mb-3 text-dark">Quick Overview</h5>
+
+            <ul class="list-unstyled text-muted small mb-4">
+                <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span><i class="bi bi-briefcase me-2 text-primary"></i>Employment Type</span>
+                    <strong class="text-dark">{{ job.get_job_type_display }}</strong>
+                </li>
+                <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span><i class="bi bi-geo-alt me-2 text-danger"></i>Location</span>
+                    <strong class="text-dark">{{ job.location|default:"Not specified" }}</strong>
+                </li>
+                <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span><i class="bi bi-currency-rupee me-2 text-success"></i>Compensation</span>
+                    <strong class="text-dark">{{ job.salary|default:"Disclosed on request" }}</strong>
+                </li>
+                <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span><i class="bi bi-person me-2 text-secondary"></i>Recruiter</span>
+                    <strong class="text-dark">{{ job.recruiter.username }}</strong>
+                </li>
+            </ul>
+
+            <div class="d-grid gap-2">
+                {% if user.is_authenticated %}
+                    {% if user.role == 'seeker' %}
+                        {% if has_applied %}
+                            <div class="p-3 text-center rounded-3 bg-success bg-opacity-10 text-success border border-success border-opacity-25 fw-semibold">
+                                <i class="bi bi-check-circle-fill me-1"></i>Application Submitted
+                            </div>
+                        {% else %}
+                            <a href="{% url 'apply_job' job.id %}" class="btn btn-modern-primary btn-lg">
+                                <i class="bi bi-send-fill me-1"></i>Apply for this Role
+                            </a>
+                        {% endif %}
+                    {% elif user.role == 'recruiter' %}
+                        {% if job.recruiter == user %}
+                            <div class="p-3 text-center rounded-3 bg-light border small text-muted">
+                                <i class="bi bi-info-circle me-1"></i>This job was posted by you.
+                            </div>
+                        {% else %}
+                            <div class="p-3 text-center rounded-3 bg-light border small text-muted">
+                                Recruiters cannot apply for jobs.
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}?next={% url 'job_detail' job.id %}" class="btn btn-modern-primary btn-lg">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Sign In to Apply
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-modern-secondary">
+                        Create Candidate Account
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

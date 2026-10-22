@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Posted Jobs - JobPortal{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h2 class="fw-bold mb-1">Manage Your Posted Vacancies</h2>
+        <p class="text-muted small mb-0">Track performance, review submissions, and manage candidate pipelines.</p>
+    </div>
+    <a href="{% url 'post_job' %}" class="btn btn-modern-warning">
+        <i class="bi bi-plus-circle me-1"></i>Post a New Job
+    </a>
+</div>
+
+{% if jobs %}
+    <div class="modern-card p-0 overflow-hidden shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-secondary small text-uppercase fw-semibold">
+                    <tr>
+                        <th class="py-3 px-4">Role Title & Company</th>
+                        <th class="py-3 px-3">Location & Type</th>
+                        <th class="py-3 px-3">Date Posted</th>
+                        <th class="py-3 px-3">Applicants</th>
+                        <th class="py-3 px-4 text-end">Management Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for job in jobs %}
+                        <tr>
+                            <!-- Role Title -->
+                            <td class="py-3 px-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-bold"
+                                         style="width: 42px; height: 42px; background: var(--primary-gradient); font-size: 1rem;">
+                                        {{ job.company_name|slice:":1"|default:job.title|slice:":1"|upper }}
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'job_detail' job.id %}" class="fw-bold text-dark text-decoration-none d-block">
+                                            {{ job.title }}
+                                        </a>
+                                        <span class="text-muted small">{{ job.company_name|default:"No company name" }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Location & Type -->
+                            <td class="py-3 px-3">
+                                <span class="d-block text-dark small fw-semibold">{{ job.location|default:"Remote" }}</span>
+                                <span class="badge-type small py-0 px-2" style="font-size: 0.75rem;">{{ job.get_job_type_display }}</span>
+                            </td>
+
+                            <!-- Date Posted -->
+                            <td class="py-3 px-3 text-secondary small">
+                                <div>{{ job.created_at|date:"M d, Y" }}</div>
+                                <span class="text-muted" style="font-size: 0.75rem;">{{ job.created_at|timesince }} ago</span>
+                            </td>
+
+                            <!-- Applicants Count Badge -->
+                            <td class="py-3 px-3">
+                                <a href="{% url 'job_applicants' job.id %}" class="text-decoration-none">
+                                    <span class="badge {% if job.applicant_count > 0 %}bg-primary text-white{% else %}bg-light text-secondary border{% endif %} px-3 py-2 rounded-pill fw-semibold">
+                                        <i class="bi bi-people-fill me-1"></i>
+                                        {{ job.applicant_count }} Candidate{% if job.applicant_count != 1 %}s{% endif %}
+                                    </span>
+                                </a>
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="py-3 px-4 text-end">
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'job_applicants' job.id %}" class="btn btn-modern-primary btn-sm px-3" title="View Candidate Resumes">
+                                        <i class="bi bi-people me-1"></i>Applicants
+                                    </a>
+                                    <a href="{% url 'edit_job' job.id %}" class="btn btn-outline-secondary btn-sm" title="Edit Opening">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a href="{% url 'delete_job' job.id %}" class="btn btn-outline-danger btn-sm" title="Delete Opening">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% else %}
+    <div class="modern-card p-5 text-center">
+        <div class="mb-3">
+            <i class="bi bi-briefcase text-muted" style="font-size: 3.5rem;"></i>
+        </div>
+        <h4 class="fw-bold text-dark">You haven't posted any jobs yet</h4>
+        <p class="text-muted small mb-4">Create your first vacancy to start receiving high-quality applications.</p>
+        <a href="{% url 'post_job' %}" class="btn btn-modern-warning px-4 py-2">
+            <i class="bi bi-plus-circle me-1"></i>Post a Vacancy Now
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
+

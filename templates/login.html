@@ -1,19 +1,112 @@
 {% extends 'base.html' %}
 
+{% block title %}Sign In - JobPortal{% endblock %}
+
 {% block content %}
+<div class="row justify-content-center align-items-center min-vh-75 py-3">
+    <div class="col-xl-9 col-lg-10">
+        <div class="card modern-card border-0 shadow-lg overflow-hidden">
+            <div class="row g-0">
+                <!-- Left Visual Side -->
+                <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-between p-5 text-white" 
+                     style="background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 60%, #312e81 100%); position: relative; overflow: hidden;">
+                    
+                    <!-- Decorative Background Glow -->
+                    <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%); top: -50px; left: -50px; border-radius: 50%;"></div>
+                    <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%); bottom: -40px; right: -40px; border-radius: 50%;"></div>
 
-<h1>Login</h1>
+                    <div style="position: relative; z-index: 2;">
+                        <div class="d-flex align-items-center mb-4">
+                            <span class="brand-logo-icon">
+                                <i class="bi bi-briefcase-fill fs-5"></i>
+                            </span>
+                            <span class="fs-4 fw-bold text-white">Job<span style="color: #818cf8;">Portal</span></span>
+                        </div>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
+                        <h2 class="display-6 fw-bold mb-3" style="line-height: 1.2;">
+                            Discover careers that elevate your future.
+                        </h2>
+                        <p class="text-white-50 lead fs-6">
+                            Connect with fast-growing companies and top talent across tech, design, marketing, and leadership.
+                        </p>
+                    </div>
 
-    <button type="submit">Login</button>
-</form>
+                    <div style="position: relative; z-index: 2;">
+                        <div class="d-flex flex-column gap-3 pt-4 border-top border-white border-opacity-10">
+                            <div class="d-flex align-items-center text-white-50 small">
+                                <i class="bi bi-check2-circle text-primary me-2 fs-5"></i>
+                                <span>Verified tech & startup jobs with direct recruiters</span>
+                            </div>
+                            <div class="d-flex align-items-center text-white-50 small">
+                                <i class="bi bi-check2-circle text-primary me-2 fs-5"></i>
+                                <span>Seamless one-click resume application system</span>
+                            </div>
+                            <div class="d-flex align-items-center text-white-50 small">
+                                <i class="bi bi-check2-circle text-primary me-2 fs-5"></i>
+                                <span>Dedicated dashboards for seekers & recruiters</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<p>
-    Don't have an account?
-    <a href="{% url 'register' %}">Register</a>
-</p>
+                <!-- Right Form Side -->
+                <div class="col-lg-7 p-4 p-md-5 bg-white">
+                    <div class="mb-4">
+                        <span class="badge bg-primary bg-opacity-10 text-primary fw-semibold px-3 py-2 rounded-pill small mb-2">
+                            Welcome Back
+                        </span>
+                        <h2 class="fw-bold text-dark mt-2 mb-1">Sign In to Your Account</h2>
+                        <p class="text-muted small">Please enter your credentials to access the portal.</p>
+                    </div>
 
+                    {% if form.errors %}
+                        <div class="alert alert-danger modern-alert py-2 small mb-4" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Invalid username or password. Please verify your details.
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Username Field -->
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label fw-semibold small text-secondary">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0" style="border-radius: 12px 0 0 12px; border-color: #e2e8f0;">
+                                    <i class="bi bi-person text-muted"></i>
+                                </span>
+                                <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username" 
+                                       class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" placeholder="Enter your username">
+                            </div>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-4">
+                            <label for="id_password" class="form-label fw-semibold small text-secondary">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0" style="border-radius: 12px 0 0 12px; border-color: #e2e8f0;">
+                                    <i class="bi bi-lock text-muted"></i>
+                                </span>
+                                <input type="password" name="password" autocomplete="current-password" required id="id_password" 
+                                       class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" placeholder="Enter your password">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-modern-primary w-100 py-3 fw-bold mb-3">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                        </button>
+                    </form>
+
+                    <div class="text-center pt-3 border-top">
+                        <span class="text-muted small">Don't have an account yet?</span>
+                        <a href="{% url 'register' %}" class="fw-bold text-decoration-none ms-1" style="color: var(--primary);">
+                            Create an Account &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

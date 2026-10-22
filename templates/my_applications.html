@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}My Applications - JobPortal{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h2 class="fw-bold mb-1">My Job Applications</h2>
+        <p class="text-muted small mb-0">Track and monitor your submission status in real-time.</p>
+    </div>
+    <a href="{% url 'job_list' %}" class="btn btn-modern-primary btn-sm">
+        <i class="bi bi-search me-1"></i>Explore More Openings
+    </a>
+</div>
+
+{% if applications %}
+    <div class="modern-card p-0 overflow-hidden shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-secondary small text-uppercase fw-semibold">
+                    <tr>
+                        <th class="py-3 px-4">Job Role & Company</th>
+                        <th class="py-3 px-3">Location & Type</th>
+                        <th class="py-3 px-3">Applied On</th>
+                        <th class="py-3 px-3">Resume</th>
+                        <th class="py-3 px-3">Application Status</th>
+                        <th class="py-3 px-4 text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for app in applications %}
+                        <tr>
+                            <!-- Role & Company -->
+                            <td class="py-3 px-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-bold"
+                                         style="width: 42px; height: 42px; background: var(--primary-gradient); font-size: 1rem;">
+                                        {{ app.job.company_name|slice:":1"|default:app.job.title|slice:":1"|upper }}
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'job_detail' app.job.id %}" class="fw-bold text-dark text-decoration-none d-block">
+                                            {{ app.job.title }}
+                                        </a>
+                                        <span class="text-muted small">{{ app.job.company_name|default:"Company" }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Location & Type -->
+                            <td class="py-3 px-3">
+                                <span class="d-block text-dark small fw-semibold">{{ app.job.location|default:"Remote" }}</span>
+                                <span class="badge-type small py-0 px-2" style="font-size: 0.75rem;">{{ app.job.get_job_type_display }}</span>
+                            </td>
+
+                            <!-- Applied On -->
+                            <td class="py-3 px-3 text-secondary small">
+                                <div>{{ app.applied_at|date:"M d, Y" }}</div>
+                                <span class="text-muted" style="font-size: 0.75rem;">{{ app.applied_at|timesince }} ago</span>
+                            </td>
+
+                            <!-- Resume -->
+                            <td class="py-3 px-3">
+                                {% if app.resume %}
+                                    <a href="{{ app.resume.url }}" target="_blank" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1">
+                                        <i class="bi bi-file-earmark-pdf text-danger me-1"></i>View CV
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted small">No file</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Status -->
+                            <td class="py-3 px-3">
+                                {% if app.status == 'shortlisted' %}
+                                    <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill fw-semibold">
+                                        <i class="bi bi-patch-check-fill me-1"></i>Shortlisted 🎉
+                                    </span>
+                                {% elif app.status == 'rejected' %}
+                                    <span class="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-25 px-3 py-2 rounded-pill fw-semibold">
+                                        <i class="bi bi-x-circle-fill me-1"></i>Not Selected
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-primary bg-opacity-15 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill fw-semibold">
+                                        <i class="bi bi-hourglass-split me-1"></i>Under Review
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Action -->
+                            <td class="py-3 px-4 text-end">
+                                <a href="{% url 'job_detail' app.job.id %}" class="btn btn-modern-secondary btn-sm">
+                                    Details &rarr;
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% else %}
+    <div class="modern-card p-5 text-center">
+        <div class="mb-3">
+            <i class="bi bi-send-x text-muted" style="font-size: 3.5rem;"></i>
+        </div>
+        <h4 class="fw-bold text-dark">You haven't submitted any job applications yet</h4>
+        <p class="text-muted small mb-4">Discover exciting openings from verified employers and apply directly with your resume.</p>
+        <a href="{% url 'job_list' %}" class="btn btn-modern-primary px-4 py-2">
+            <i class="bi bi-search me-1"></i>Browse Available Openings
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
+

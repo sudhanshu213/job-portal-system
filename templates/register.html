@@ -1,18 +1,144 @@
 {% extends 'base.html' %}
 
+{% block title %}Create Account - JobPortal{% endblock %}
+
 {% block content %}
+<div class="row justify-content-center align-items-center min-vh-75 py-3">
+    <div class="col-xl-9 col-lg-10">
+        <div class="card modern-card border-0 shadow-lg overflow-hidden">
+            <div class="row g-0">
+                <!-- Left Visual Side -->
+                <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-between p-5 text-white" 
+                     style="background: linear-gradient(145deg, #064e3b 0%, #065f46 50%, #047857 100%); position: relative; overflow: hidden;">
+                    
+                    <!-- Decorative Background Glow -->
+                    <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(52,211,153,0.3) 0%, transparent 70%); top: -50px; left: -50px; border-radius: 50%;"></div>
+                    <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.3) 0%, transparent 70%); bottom: -40px; right: -40px; border-radius: 50%;"></div>
 
-<h1>Register</h1>
+                    <div style="position: relative; z-index: 2;">
+                        <div class="d-flex align-items-center mb-4">
+                            <span class="brand-logo-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="bi bi-briefcase-fill fs-5"></i>
+                            </span>
+                            <span class="fs-4 fw-bold text-white">Job<span style="color: #6ee7b7;">Portal</span></span>
+                        </div>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
+                        <h2 class="display-6 fw-bold mb-3" style="line-height: 1.2;">
+                            Join our community of builders & hiring leaders.
+                        </h2>
+                        <p class="text-white-50 lead fs-6">
+                            Whether you are searching for your next dream role or scouting top talent to build your team, get started in seconds.
+                        </p>
+                    </div>
 
-<p>
-    Already have an account?
-    <a href="{% url 'login' %}">Login</a>
-</p>
+                    <div style="position: relative; z-index: 2;">
+                        <div class="p-3 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 mb-2">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-person-badge-fill text-warning fs-5 me-2"></i>
+                                <span class="fw-bold small">For Recruiters</span>
+                            </div>
+                            <p class="text-white-50 small mb-0">Post unlimited openings, customize job specifications, and review applicants effortlessly.</p>
+                        </div>
 
+                        <div class="p-3 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-person-workspace text-info fs-5 me-2"></i>
+                                <span class="fw-bold small">For Job Seekers</span>
+                            </div>
+                            <p class="text-white-50 small mb-0">Search thousands of roles with verified companies and submit direct resume applications.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Form Side -->
+                <div class="col-lg-7 p-4 p-md-5 bg-white">
+                    <div class="mb-4">
+                        <span class="badge bg-success bg-opacity-10 text-success fw-semibold px-3 py-2 rounded-pill small mb-2">
+                            Get Started Free
+                        </span>
+                        <h2 class="fw-bold text-dark mt-2 mb-1">Create Your Account</h2>
+                        <p class="text-muted small">Choose your profile type to customize your experience.</p>
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger modern-alert py-2 small mb-4">
+                            {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Role Selector -->
+                        <div class="mb-3">
+                            <label for="{{ form.role.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                I Want to Join As <span class="text-danger">*</span>
+                            </label>
+                            {{ form.role }}
+                            {% if form.role.errors %}
+                                <div class="text-danger small mt-1">{% for error in form.role.errors %}{{ error }}{% endfor %}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Username Field -->
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Username <span class="text-danger">*</span>
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">{% for error in form.username.errors %}{{ error }}{% endfor %}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Email Address <span class="text-danger">*</span>
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{% for error in form.email.errors %}{{ error }}{% endfor %}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password 1 -->
+                        <div class="mb-3">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Password <span class="text-danger">*</span>
+                            </label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="text-danger small mt-1">{% for error in form.password1.errors %}{{ error }}<br>{% endfor %}</div>
+                            {% endif %}
+                            <div class="form-text small text-muted">Minimum 8 characters with letters & numbers.</div>
+                        </div>
+
+                        <!-- Password 2 -->
+                        <div class="mb-4">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Confirm Password <span class="text-danger">*</span>
+                            </label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="text-danger small mt-1">{% for error in form.password2.errors %}{{ error }}{% endfor %}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-modern-primary w-100 py-3 fw-bold mb-3">
+                            <i class="bi bi-person-check-fill me-2"></i>Create Account
+                        </button>
+                    </form>
+
+                    <div class="text-center pt-3 border-top">
+                        <span class="text-muted small">Already have an account?</span>
+                        <a href="{% url 'login' %}" class="fw-bold text-decoration-none ms-1" style="color: var(--primary);">
+                            Sign In &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
